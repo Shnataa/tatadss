@@ -6,7 +6,7 @@
             <!-- Add your image here -->
             <img src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 50px; height: 50px; margin-right: 10px;">
             <!-- Title text with custom class for responsive font size -->
-            <div class="sidebar-title" style="color: #0508B4; font-weight:bold;">SPK DPU Bangka Barat</div>
+            <div class="sidebar-title" style="color: #0508B4; font-weight:bold;">SPINTRA</div>
         </div>
     </li> 
 
@@ -96,7 +96,7 @@
             <!-- Add your image here -->
             <img src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 50px; height: 50px; margin-right: 10px;">
             <!-- Title text with custom class for responsive font size -->
-            <div class="sidebar-title" style="color: #0508B4; font-weight:bold;">SPK DPU Bangka Barat</div>
+            <div class="sidebar-title" style="color: #0508B4; font-weight:bold;">SPINTRA</div>
         </div>
     </li> 
 
