@@ -31,7 +31,8 @@
                     <tbody>
                         @foreach ($alternatifs as $alternatif)
                             <tr>
-                                <td style="text-align: center;">{{ $alternatif->id }}</td>
+                                <!-- Menggunakan $loop->iteration untuk ID yang berurutan -->
+                                <td style="text-align: center;">{{ $loop->iteration }}</td>
                                 <td>{{ $alternatif->nama }}</td>
                                 <td style="text-align: center;">
                                     <a href="{{ route('alternatif.edit', $alternatif->id) }}" class="btn btn-success btn-sm" style="color: white;">
