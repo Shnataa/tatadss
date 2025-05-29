@@ -23,15 +23,16 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th style="text-align: center;">ID</th>
+                            <th style="text-align: center;">No</th>
                             <th style="text-align: center;">Nama</th>
                             <th style="text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Iterasi data alternatif -->
                         @foreach ($alternatifs as $alternatif)
                             <tr>
-                                <!-- Menggunakan $loop->iteration untuk ID yang berurutan -->
+                                <!-- ID diambil dari iterasi -->
                                 <td style="text-align: center;">{{ $loop->iteration }}</td>
                                 <td>{{ $alternatif->nama }}</td>
                                 <td style="text-align: center;">
