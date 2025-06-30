@@ -38,7 +38,7 @@
                     <tbody>
                         @foreach($kriterias as $kriteria)
                             <tr>
-                                <td style="text-align: center;">{{ $kriteria->id }}</td>
+                                <td style="text-align: center;">{{ $loop->iteration }}</td> <!-- mengurutkan id tampilan code aslinya($kriteria->id) -->
                                 <td>{{ $kriteria->nama_kriteria }}</td>
                                 <td>{{ $kriteria->bobot }}</td>
                                 <td style="text-align: center;">{{ $kriteria->tipe_kriteria }}</td> <!-- Tampilkan tipe_kriteria -->
