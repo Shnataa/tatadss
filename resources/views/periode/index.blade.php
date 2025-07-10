@@ -23,6 +23,13 @@
                 </div>
             @endif
 
+            <!-- Menampilkan pesan error jika ada -->
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <!-- Tabel untuk menampilkan daftar periode -->
             <div class="table-responsive mt-4">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -37,7 +44,7 @@
                     <tbody>
                         @foreach ($periodes as $index => $periode)
                             <tr>
-                                <td style="text-align: center;">{{ $index + 1 }}</td> <!-- Menggunakan index untuk ID -->
+                                <td style="text-align: center;">{{ $index + 1 }}</td>
                                 <td>{{ $periode->nama }}</td>
                                 <td style="text-align: center;">
                                     @if($periode->flag)
