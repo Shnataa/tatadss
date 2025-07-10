@@ -30,11 +30,11 @@
         </div>
     </div>
 
-    <!-- Menampilkan hasil perhitungan jika periode dipilih -->
-    @if(isset($hasilTertinggi) && $hasilTertinggi->isNotEmpty())
+    <!-- Tampilkan hasil jika tersedia -->
+    @if(isset($hasilTerendah) && $hasilTerendah->isNotEmpty())
         <div class="card shadow mb-4">
             <div class="card-body">
-                <h5 class="mt-3">Jalan yang perlu diperbaiki pada periode <strong>{{ $periodeNama }}</strong> Adalah:</h5>
+                <h5 class="mt-3">Jalan yang paling membutuhkan perbaikan pada periode <strong>{{ $periodeNama }}</strong> adalah:</h5>
                 <div class="table-responsive mt-4">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
@@ -45,7 +45,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($hasilTertinggi as $hasil)
+                            @foreach($hasilTerendah as $hasil)
                                 <tr>
                                     <td style="text-align: center;">{{ $hasil->alternatif->nama }}</td>
                                     <td style="text-align: center;">{{ number_format($hasil->skor, 2) }}</td>

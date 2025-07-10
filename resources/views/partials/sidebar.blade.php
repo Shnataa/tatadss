@@ -73,7 +73,13 @@
             <span style="color: #000;">Hasil Akhir</span>
         </a>
     </li>
-
+    <!-- Registrasi-->
+        <li class="nav-item">
+        <a class="nav-link" href="/dashboard/registrasi"> 
+            <i class="fas fa-check-circle" style="color: #000;"></i> <!-- Icon -->
+            <span style="color: #000;">Registrasi</span>
+        </a>
+    </li>
     <!-- Sidebar Toggle Button -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
