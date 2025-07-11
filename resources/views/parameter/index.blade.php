@@ -3,12 +3,21 @@
 @section('content')
 <div class="container-fluid">
 
+
+
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-4 font-weight-bold" style="color:rgb(17, 10, 54);">Daftar Parameter</h1>
         <a href="{{ route('parameter.create') }}" class="btn" style="background-color: #0066ff; color:white;">Tambah Parameter</a>
     </div>
 
+    {{-- Pesan sukses --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+    
     <!-- Content Row -->
     @foreach($kriterias as $kriteria)
         <div class="card shadow mb-4">
@@ -27,22 +36,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Reset nomor urut untuk setiap kriteria -->
                             @php $no = 1; @endphp
                             @if(isset($parameters[$kriteria->id]) && count($parameters[$kriteria->id]) > 0)
                                 @foreach($parameters[$kriteria->id] as $parameter)
                                     <tr>
-                                        <!-- Gunakan nomor urut dari variabel $no -->
                                         <td style="text-align: center; padding: 1rem;">{{ $no++ }}</td>
                                         <td style="padding: 1rem;">{{ $parameter->parameter }}</td>
                                         <td style="padding: 1rem;">{{ $parameter->nilai }}</td>
                                         <td style="text-align: center; padding: 1rem;">
-                                            <!-- Tombol Edit -->
                                             <a href="{{ route('parameter.edit', $parameter->id) }}" class="btn btn-success btn-sm" style="color: white;">
                                                 <i class="fas fa-pen"></i> Edit
                                             </a>
 
-                                            <!-- Tombol Hapus -->
                                             <form action="{{ route('parameter.destroy', $parameter->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
