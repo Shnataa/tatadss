@@ -15,10 +15,9 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: rgba(255, 255, 255, 0.5); /* Warna overlay putih, transparansi 70% */
-            background-blend-mode: overlay; /* Menggabungkan warna dengan gambar */
+            background-color: rgba(255, 255, 255, 0.5);
+            background-blend-mode: overlay;
         }
-
 
         .container {
             background-color: white;
@@ -27,7 +26,7 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s ease-out; /* Tambahkan animasi */
+            animation: fadeIn 1s ease-out;
         }
 
         .form-control {
@@ -58,14 +57,13 @@
             color: white;
         }
 
-        /* Tambahkan animasi fadeIn */
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(-30px);
             }
             to {
-                opacity: 2;
+                opacity: 1;
                 transform: translateY(0);
             }
         }
@@ -74,18 +72,27 @@
 <body>
 
     <div class="container">
-        <!-- User Icon -->
+        <!-- Judul -->
         <h5 class="text-center mb-4" style="color: #0508B4;">
-        Sistem Pendukung Keputusan <br> Dinas PU Bangka Barat
+            Sistem Pendukung Keputusan <br> Dinas PU Bangka Barat
         </h5>
-        <!-- Tabs Navigation -->
-        <div class="tab-nav text-center d-flex">
-            
-        
-        </div>
 
         <!-- Login Form -->
         <div id="login-form">
+            {{-- Pesan gagal login --}}
+            @if(session('error'))
+                <div class="alert alert-danger text-center">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- Pesan logout atau info lain --}}
+            @if(session('status'))
+                <div class="alert alert-info text-center">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="input-group mb-3">
@@ -94,26 +101,18 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <div class="input-group mb-4">
                     <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required>
                     @error('password')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <button type="submit" class="btn btn-submit">Login</button>
             </form>
         </div>
-
-
-    <script>
-        function showTab(tab) {
-            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
-
-            document.getElementById('login-tab').classList.toggle('active-tab', tab === 'login');
-            document.getElementById('register-tab').classList.toggle('active-tab', tab === 'register');
-        }
-    </script>
+    </div>
 
 </body>
 </html>

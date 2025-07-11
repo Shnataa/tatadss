@@ -36,7 +36,15 @@ class AuthController extends Controller
         }
 
         // Jika gagal login
-        return back()->withErrors(['message' => 'Invalid credentials'])->withInput();
+        {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        return redirect()->intended('/dashboard');
+    }
+
+    return back()->with('error', 'Email atau password salah.');
+}
     }
 
     // Proses logout
@@ -51,6 +59,8 @@ class AuthController extends Controller
         
         return redirect()->route('login'); 
     }
+
+    
 
     // Halaman registrasi
     public function index()
@@ -75,6 +85,8 @@ class AuthController extends Controller
 
         // Redirect ke halaman login dengan pesan sukses
         return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+
+        
     }
     
 }
