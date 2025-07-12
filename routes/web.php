@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('dashboard/parameter', ParameterController::class);
     Route::resource('dashboard/alternatif', AlternatifController::class);
     Route::resource('dashboard/penilaian', PenilaianController::class);
-    Route::get('dashboard/registrasi', [AuthController::class, 'index'])->name('registrasi.index');
+    Route::resource('dashboard/registrasi', AuthController::class);
     Route::get('dashboard/perhitungan', [PerhitunganController::class, 'index'])->name('perhitungan.index');
     Route::get('dashboard/perhitungan/hitung', [PerhitunganController::class, 'hitungSmart'])->name('perhitungan.hitung');
     Route::get('dashboard/hasil-akhir', [HasilAkhirController::class, 'index'])->name('hasilAkhir.index');

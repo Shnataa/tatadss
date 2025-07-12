@@ -79,6 +79,15 @@
                                 <td>{{ $u->name }}</td>
                                 <td>{{ $u->email }}</td>
                                 <td style="text-align: center;">{{ $u->role }}</td> <!-- Tampilkan tipe_kriteria -->
+                                <td>
+                                     <form action="{{ route('registrasi.destroy', $u->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

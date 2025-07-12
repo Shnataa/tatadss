@@ -65,7 +65,6 @@ class AuthController extends Controller
     // Halaman registrasi
     public function index()
     {
-
         $user = User::all();
         return view('registrasi.index', compact('user'));
     }
@@ -90,6 +89,44 @@ class AuthController extends Controller
         return redirect()->route('registrasi.index')->with('success', 'Registrasi berhasil. Silakan login.');
 
         
+    }
+
+    // GET /registrasi/{id}
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('registrasi.show', compact('user'));
+    }
+
+    // GET /registrasi/{id}/edit
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('registrasi.edit', compact('user'));
+    }
+
+    // PUT/PATCH /registrasi/{id}
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => "required|email|max:255|unique:users,email,$id",
+        ]);
+
+        $user->update($request->only('name', 'email'));
+
+        return redirect()->route('registrasi.index')->with('success', 'Data berhasil diperbarui.');
+    }
+
+    // DELETE /registrasi/{id}
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('registrasi.index')->with('success', 'User berhasil dihapus.');
     }
     
 }
