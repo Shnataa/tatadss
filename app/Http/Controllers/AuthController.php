@@ -65,7 +65,10 @@ class AuthController extends Controller
     // Halaman registrasi
     public function index()
     {
-        return view('registrasi.index');}
+
+        $user = User::all();
+        return view('registrasi.index', compact('user'));
+    }
     // Proses registrasi
     public function register(Request $request)
     {
@@ -84,7 +87,7 @@ class AuthController extends Controller
         ]);
 
         // Redirect ke halaman login dengan pesan sukses
-        return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+        return redirect()->route('registrasi.index')->with('success', 'Registrasi berhasil. Silakan login.');
 
         
     }

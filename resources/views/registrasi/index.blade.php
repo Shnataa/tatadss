@@ -49,6 +49,43 @@
             </form>
 
         </div>
+
+        <div class="card shadow mb-4 mt-4" style="width: 100%;"> 
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <span class="m-0 font-weight-bold" style="color: black;">Tabel User</span>
+         
+        </div>
+        <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">ID</th>
+                            <th style="text-align: center;">Name</th>
+                            <th style="text-align: center;">Email</th>
+                            <th style="text-align: center;">Role</th>  <!-- Kolom Tipe Kriteria -->
+                          <th style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($user as $u)
+                            <tr>
+                                <td style="text-align: center;">{{ $loop->iteration }}</td> <!-- mengurutkan id tampilan code aslinya($kriteria->id) -->
+                                <td>{{ $u->name }}</td>
+                                <td>{{ $u->email }}</td>
+                                <td style="text-align: center;">{{ $u->role }}</td> <!-- Tampilkan tipe_kriteria -->
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
 @endsection
