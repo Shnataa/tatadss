@@ -85,7 +85,7 @@
     <!-- Menampilkan Periode -->
     <p>Periode: <span class="highlight">{{ $periode->nama ?? 'Data Periode Tidak Ditemukan' }}</span></p>
     
-    @if($hasilTertinggi && $hasilTertinggi->isNotEmpty())
+    @if($hasilTerendah && $hasilTerendah->isNotEmpty())
         <table>
             <thead>
                 <tr>
@@ -95,7 +95,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($hasilTertinggi as $hasil)
+                @foreach($hasilTerendah as $hasil)
                     <tr>
                         <td>{{ $hasil->alternatif->nama ?? 'Nama Alternatif Tidak Ditemukan' }}</td>
                         <td>{{ number_format($hasil->skor, 2) }}</td>
