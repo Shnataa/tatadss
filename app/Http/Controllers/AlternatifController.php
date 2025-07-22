@@ -10,7 +10,7 @@ class AlternatifController extends Controller
     // Menampilkan daftar alternatif
     public function index()
     {
-        $alternatifs = Alternatif::all(); // Ambil semua data alternatif
+        $alternatifs = Alternatif::orderBy('nama', 'asc')->get(); // Urutkan berdasarkan nama (A-Z)
         return view('alternatif.index', compact('alternatifs'));
     }
 
