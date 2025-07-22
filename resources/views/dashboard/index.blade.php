@@ -71,36 +71,43 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', async function () {
-        // Ambil data dari endpoint Laravel
-        const response = await fetch('/chart-data-penilaian');
-        const data = await response.json();
+    const response = await fetch('/chart-data-penilaian');
+    const data = await response.json();
 
-        // Buat label dan data untuk Pie Chart
-        const labels = data.map(item => item.kondisi); // Gunakan nama kondisi dari parameter
-        const totals = data.map(item => item.total);  // Gunakan total data
+    // Urutkan data agar sesuai dengan warna
+    const kondisiOrder = ['Rusak Berat', 'Rusak Ringan', 'Sedang', 'Baik'];
+    data.sort((a, b) => kondisiOrder.indexOf(a.kondisi) - kondisiOrder.indexOf(b.kondisi));
 
-        // Render Pie Chart
-        const ctx = document.getElementById('kondisiChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: totals,
-                    backgroundColor: ['#4CAF50', '#FFEB3B', '#FFC107', '#F44336', '#2196F3'], // Warna
-                    borderWidth: 1,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
+    const labels = data.map(item => item.kondisi);
+    const totals = data.map(item => item.total);
+
+    const ctx = document.getElementById('kondisiChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: totals,
+                backgroundColor: [
+                    '#F44336', // Rusak Berat - Merah
+                    '#FFC107', // Rusak Ringan - Oranye
+                    '#FFEB3B', // Sedang - Kuning
+                    '#4CAF50'  // Baik - Hijau
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
                 },
             },
-        });
+        },
     });
+});
+
 </script>
 
 
