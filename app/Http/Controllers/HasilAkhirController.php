@@ -24,7 +24,7 @@ class HasilAkhirController extends Controller
                 ->selectRaw('alternatif_id, periode_id, MIN(skor) as skor')
                 ->groupBy('alternatif_id', 'periode_id')
                 ->orderBy('skor') // skor terendah menjadi ranking 1
-                ->get();
+                ->paginate(10);
 
             // Ambil nama periode yang dipilih
             $periodeNama = Periode::find($periodeId)->nama;

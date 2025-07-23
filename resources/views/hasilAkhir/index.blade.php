@@ -49,13 +49,15 @@
                                 <tr>
                                     <td style="text-align: center;">{{ $hasil->alternatif->nama }}</td>
                                     <td style="text-align: center;">{{ number_format($hasil->skor, 2) }}</td>
-                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                    <td style="text-align: center;">{{ $loop->iteration + ($hasilTerendah->firstItem()-1) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-
+            <div class="d-flex justify-content-center mt-4">
+                {{ $hasilTerendah->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
                 <!-- Export Buttons -->
                 <div class="mt-3">
                     <a href="{{ route('hasilAkhir.exportPdf', ['periodeId' => $periodeId]) }}" class="btn btn-danger">Export as PDF</a>
