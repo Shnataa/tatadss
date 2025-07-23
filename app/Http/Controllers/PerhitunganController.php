@@ -9,6 +9,7 @@ use App\Models\Periode;
 use App\Models\Kriteria;
 use App\Models\Parameter;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PerhitunganController extends Controller
 {
@@ -125,38 +126,67 @@ class PerhitunganController extends Controller
     
         // Mengurutkan alternatif berdasarkan skor SMART (skor tertinggi ke terendah)
         arsort($skorSmart);
-    
+        // Tambahkan pagination ke skorSmart
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10;
+        $items = array_slice($skorSmart, ($currentPage - 1) * $perPage, $perPage, true);
+
+        $paginatedSkorSmart = new LengthAwarePaginator(
+            $items,
+            count($skorSmart),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+        
         $dataAsli = [];
-    
-        foreach ($alternatifs as $alternatifId => $penilaianAlternatif) {
-            foreach ($kriteria as $kriteriaKey) {
-                // Ambil nilai penilaian asli berdasarkan kriteria
-                $penilaian = $penilaianAlternatif->first(); // Ambil penilaian pertama untuk alternatif ini
-                $parameter = null;
-        
-                // Cek relasi berdasarkan kriteria
-                if ($kriteriaKey === 'panjang_ruas_jalan_id') {
-                    $parameter = $penilaian->panjangRuasJalan;
-                } elseif ($kriteriaKey === 'lebar_ruas_jalan_id') {
-                    $parameter = $penilaian->lebarRuasJalan;
-                } elseif ($kriteriaKey === 'jenis_permukaan_jalan_id') {
-                    $parameter = $penilaian->jenisPermukaanJalan;
-                } elseif ($kriteriaKey === 'kondisi_jalan_id') {
-                    $parameter = $penilaian->kondisiJalan;
-                } elseif ($kriteriaKey === 'mobilitas_jalan_id') {
-                    $parameter = $penilaian->mobilitasJalan;
-                }
-        
-                // Jika parameter ditemukan, simpan nilai asli ke dalam $dataAsli
-                if ($parameter) {
-                    $dataAsli[$alternatifId][$this->getKriteriaName($kriteriaKey)] = $parameter->nilai;
-                } else {
-                    $dataAsli[$alternatifId][$this->getKriteriaName($kriteriaKey)] = 0; // Nilai default jika tidak ada data
-                }
-            }
+        $paginatedAlternatifIds = array_keys($items);
+
+        // Filter ulang data berdasarkan alternatif yang muncul di halaman ini
+        $dataAsli = array_filter($dataAsli, function ($key) use ($paginatedAlternatifIds) {
+            return in_array($key, $paginatedAlternatifIds);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $matriksKeputusan = array_filter($matriksKeputusan, function ($key) use ($paginatedAlternatifIds) {
+            return in_array($key, $paginatedAlternatifIds);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $skorDetails = array_filter($skorDetails, function ($key) use ($paginatedAlternatifIds) {
+            return in_array($key, $paginatedAlternatifIds);
+        }, ARRAY_FILTER_USE_KEY);
+
+        // Ambil hanya alternatif yang ada di halaman ini
+foreach ($alternatifs as $alternatifId => $penilaianAlternatif) {
+    if (!in_array($alternatifId, $paginatedAlternatifIds)) {
+        continue; // lewati jika bukan bagian dari halaman sekarang
+    }
+
+    foreach ($kriteria as $kriteriaKey) {
+        $penilaian = $penilaianAlternatif->first(); // Ambil penilaian pertama untuk alternatif ini
+        $parameter = null;
+
+        if ($kriteriaKey === 'panjang_ruas_jalan_id') {
+            $parameter = $penilaian->panjangRuasJalan;
+        } elseif ($kriteriaKey === 'lebar_ruas_jalan_id') {
+            $parameter = $penilaian->lebarRuasJalan;
+        } elseif ($kriteriaKey === 'jenis_permukaan_jalan_id') {
+            $parameter = $penilaian->jenisPermukaanJalan;
+        } elseif ($kriteriaKey === 'kondisi_jalan_id') {
+            $parameter = $penilaian->kondisiJalan;
+        } elseif ($kriteriaKey === 'mobilitas_jalan_id') {
+            $parameter = $penilaian->mobilitasJalan;
         }
+
+        if ($parameter) {
+            $dataAsli[$alternatifId][$this->getKriteriaName($kriteriaKey)] = $parameter->nilai;
+        } else {
+            $dataAsli[$alternatifId][$this->getKriteriaName($kriteriaKey)] = 0;
+        }
+    }
+}
+
     
-        return view('perhitungan.hasil', compact('matriksKeputusan', 'skorSmart', 'kriteria', 'periodeId', 'skorDetails', 'alternatifsData', 'dataAsli'));
+        return view('perhitungan.hasil', compact('matriksKeputusan','paginatedSkorSmart', 'skorSmart', 'kriteria', 'periodeId', 'skorDetails', 'alternatifsData', 'dataAsli'));
     }
     
 
@@ -195,4 +225,3 @@ class PerhitunganController extends Controller
         return $kriteriaMapping[$kriteriaKey] ?? ''; // Kembalikan kriteria yang sesuai atau string kosong jika tidak ada
     }
 }
-

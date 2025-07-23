@@ -108,16 +108,24 @@
                             <th style="text-align: center;">Rangking</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($skorSmart as $alternatifId => $skor)
-                            <tr>
-                                <td>{{ $alternatifsData[$alternatifId] ?? 'Nama Tidak Ditemukan' }}</td>
-                                <td>{{ number_format($skor, 2) }}</td>
-                                <td>{{ $loop->iteration }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
+                        <tbody>
+                            @php
+                                $rank = $paginatedSkorSmart->firstItem();
+                            @endphp
+                            @foreach($paginatedSkorSmart as $alternatifId => $skor)
+                                <tr>
+                                    <td>{{ $alternatifsData[$alternatifId] ?? 'Nama Tidak Ditemukan' }}</td>
+                                    <td>{{ number_format($skor, 2) }}</td>
+                                    <td>{{ $rank++ }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
                 </table>
+                <div class="d-flex justify-content-end mt-3">
+    {{ $paginatedSkorSmart->links('pagination::bootstrap-4') }}
+</div>
+         
             </div>
         </div>
     </div>
