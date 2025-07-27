@@ -15,38 +15,36 @@ class PenilaianController extends Controller
      * Menampilkan daftar penilaian
      */
     public function index(Request $request)
-{
-    // Ambil periode_id dari query string (parameter URL)
-    $periodeId = $request->get('periode_id');  // Pastikan $request ada di sini
-    
-    // Validasi periode_id jika ada
-    $request->validate([
-        'periode_id' => 'nullable|exists:periode,id',
-    ]);
-    
-    // Jika periode_id dipilih, ambil data penilaian berdasarkan periode
-    if ($periodeId) {
-        // Ambil semua penilaian berdasarkan periode tertentu
+    {
+        $periodeId = $request->get('periode_id');
+
+        // Ambil periode aktif (default)
+        $currentPeriode = Periode::where('flag', true)->first();
+
+        // Validasi periode_id
+        $request->validate([
+            'periode_id' => 'nullable|exists:periode,id',
+        ]);
+
+        // Jika tidak ada query string, pakai periode aktif
+        if (!$periodeId && $currentPeriode) {
+            $periodeId = $currentPeriode->id;
+        }
+
+        // Query penilaian berdasarkan periode yang dipilih
         $penilaians = Penilaian::with([
-            'periode', 'alternatif', 'panjangRuasJalan', 'lebarRuasJalan', 
-            'jenisPermukaanJalan', 'kondisiJalan', 'mobilitasJalan'
-        ])->where('periode_id', $periodeId)->paginate();
-    } 
-    else {
-        // Jika tidak ada periode_id, tampilkan semua penilaian dan urutkan berdasarkan periode_id
-        $penilaians = Penilaian::with([
-            'periode', 'alternatif', 'panjangRuasJalan', 'lebarRuasJalan', 
+            'periode', 'alternatif', 'panjangRuasJalan', 'lebarRuasJalan',
             'jenisPermukaanJalan', 'kondisiJalan', 'mobilitasJalan'
         ])
-        ->orderBy('periode_id') // Mengurutkan berdasarkan periode_id
+        ->where('periode_id', $periodeId)
+        ->orderBy('alternatif_id')
         ->paginate(10);
-    }
-    // Ambil semua periode yang tersedia untuk dropdown filter
-    $periodes = Periode::all();
 
-    // Kirim data penilaian dan periode ke view
-    return view('penilaian.index', compact('penilaians', 'periodes', 'periodeId'));
-}
+        $periodes = Periode::all();
+
+        return view('penilaian.index', compact('penilaians', 'periodes', 'periodeId'));
+    }
+
 
     
 
@@ -54,28 +52,23 @@ class PenilaianController extends Controller
      * Menampilkan form untuk menambahkan penilaian baru
      */
     public function create()
-{
-    // Ambil periode aktif
-    $currentPeriode = Periode::where('flag', true)->first();
+    {
+        $periode = Periode::where('flag', true)->first();
 
-    // Jika tidak ada periode aktif, redirect ke halaman yang sesuai dengan pesan
-    if (!$currentPeriode) {
-        return redirect()->route('periode.index')->with('error', 'Tidak ada periode aktif. Harap aktifkan periode terlebih dahulu.');
+        if (!$periode) {
+            return redirect()->route('periode.index')->with('error', 'Tidak ada periode aktif.');
+        }
+
+        $usedAlternatifs = Penilaian::where('periode_id', $periode->id)
+            ->pluck('alternatif_id')
+            ->toArray();
+
+        $alternatifs = Alternatif::whereNotIn('id', $usedAlternatifs)->get();
+        $kriterias = Kriteria::with('parameter')->get();
+
+        return view('penilaian.create', compact('periode', 'alternatifs', 'kriterias', 'usedAlternatifs'));
     }
 
-    // Ambil periode lainnya dan data yang diperlukan untuk form
-    $periodes = Periode::where('flag', true)->get();
-    $usedAlternatifs = Penilaian::where('periode_id', $currentPeriode->id)
-                                ->pluck('alternatif_id')
-                                ->toArray();
-    $alternatifs = Alternatif::whereNotIn('id', $usedAlternatifs)->get();
-    $kriterias = Kriteria::with('parameter')->get();
-
-    return view('penilaian.create', compact('periodes', 'alternatifs', 'kriterias', 'usedAlternatifs'));
-}
-
-    
-    
 
     /**
      * Menyimpan penilaian baru
@@ -160,4 +153,57 @@ class PenilaianController extends Controller
         $penilaian->delete();
         return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil dihapus');
     }
+
+    // Tampilkan form checklist alternatif
+    public function pilihAlternatifBatch()
+    {
+        $currentPeriode = Periode::where('flag', true)->first();
+
+        if (!$currentPeriode) {
+            return redirect()->route('periode.index')->with('error', 'Tidak ada periode aktif.');
+        }
+
+        $usedAlternatifs = Penilaian::where('periode_id', $currentPeriode->id)->pluck('alternatif_id')->toArray();
+        $alternatifs = Alternatif::all();
+
+        return view('penilaian.pilih_batch', compact('alternatifs', 'usedAlternatifs'));
+    }
+
+    // Tampilkan form penilaian batch
+    public function createFormBatch(Request $request)
+    {
+        $request->validate([
+            'alternatif_ids' => 'required|array|min:1'
+        ]);
+
+        $periode = Periode::where('flag', true)->first();
+        $kriterias = Kriteria::with('parameter')->get();
+        $alternatifs_terpilih = Alternatif::whereIn('id', $request->alternatif_ids)->get();
+
+        return view('penilaian.form_batch', compact('periode', 'alternatifs_terpilih', 'kriterias'));
+    }
+
+    public function storeBatch(Request $request)
+    {
+        $request->validate([
+            'periode_id' => 'required|exists:periode,id',
+            'penilaian' => 'required|array'
+        ]);
+
+        foreach ($request->penilaian as $data) {
+            Penilaian::create([
+                'periode_id' => $request->periode_id,
+                'alternatif_id' => $data['alternatif_id'],
+                'panjang_ruas_jalan_id' => $data['panjang_ruas_jalan_id'],
+                'lebar_ruas_jalan_id' => $data['lebar_ruas_jalan_id'],
+                'jenis_permukaan_jalan_id' => $data['jenis_permukaan_jalan_id'],
+                'kondisi_jalan_id' => $data['kondisi_jalan_id'],
+                'mobilitas_jalan_id' => $data['mobilitas_jalan_id'],
+            ]);
+        }
+
+        return redirect()->route('penilaian.index')->with('success', 'Semua penilaian berhasil disimpan!');
+    }
+
+
 }

@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('dashboard/registrasi', AuthController::class);
     Route::get('dashboard/perhitungan', [PerhitunganController::class, 'index'])->name('perhitungan.index');
     Route::get('dashboard/perhitungan/hitung', [PerhitunganController::class, 'hitungSmart'])->name('perhitungan.hitung');
+    Route::post('dashboard/penilaian/store-batch', [PenilaianController::class, 'storeBatch'])->name('penilaian.storeBatch');
     Route::get('dashboard/hasil-akhir', [HasilAkhirController::class, 'index'])->name('hasilAkhir.index');
     Route::get('/periode/{id}/activate', [PeriodeController::class, 'activate'])->name('periode.activate');
     Route::get('/periode/{id}/deactivate', [PeriodeController::class, 'deactivate'])->name('periode.deactivate');
@@ -49,6 +50,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::post('/user/profile/update', [UserController::class, 'updateProfile'])->name('user.updateProfile');
     Route::get('/user/change-password', [UserController::class, 'changePassword'])->name('user.changePassword');
     Route::post('/user/change-password', [UserController::class, 'updatePassword'])->name('user.updatePassword');
+    
 });
 
 Route::get('/chart-data', [ChartController::class, 'getChartData']);
