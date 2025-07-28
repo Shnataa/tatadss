@@ -200,9 +200,9 @@ foreach ($alternatifs as $alternatifId => $penilaianAlternatif) {
         $maxValues = [
             'Panjang Ruas Jalan' => 5,  // Nilai tertinggi untuk Panjang Ruas Jalan
             'Lebar Ruas Jalan' => 5,
-            'Jenis Permukaan Jalan' => 5,
-            'Kondisi Jalan' => 5,
-            'Mobilitas Jalan' => 5,
+            'Jenis Permukaan Jalan' => 4,
+            'Kondisi Jalan' => 4,
+            'Mobilitas Jalan' => 4,
         ];
 
         // Ambil nilai maksimal berdasarkan kriteria
